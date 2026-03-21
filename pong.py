@@ -1,3 +1,4 @@
+import sys
 import pygame
 import random
 
@@ -12,6 +13,7 @@ BLACK  = (0,   0,   0)
 WHITE  = (255, 255, 255)
 GREEN  = (0,   200, 100)
 PURPLE = (120, 80,  220)
+OFFWHITE = (220, 220, 220)
 
 #idk what these do yet...
 left_y  = 250
@@ -25,6 +27,8 @@ right_score = 0
 prev_ball_x = ball_x   # removes the problem of tunneling (ball passing through the paddle at high pixel speeds)
 
 font = pygame.font.SysFont("monospace", 64, bold=True)
+win_font = pygame.font.SysFont("arial", 80, bold=True)
+small_font = pygame.font.SysFont("arial", 32)
 
 #game loop
 running = True
@@ -50,6 +54,7 @@ while running:
         right_y += 10
     
     # Move the ball
+    prev_ball_x = ball_x # Bug correction, we need to save the current position of ball before changing it...
     ball_x += ball_vx
     ball_y += ball_vy
 
@@ -111,17 +116,54 @@ while running:
     screen.blit(left_text,  (200, 20))
     screen.blit(right_text, (560, 20))
 
-    if left_score == 10:
-        break
-    elif right_score == 10:
-        break
+    if left_score == 10 or right_score == 10:       # to get that screen at the end (winnder, play again and quit)
+            screen.fill(BLACK)
+
+            if left_score == 10:
+                win_text = win_font.render("LEFT WINS", True, OFFWHITE)
+            else:
+                win_text = win_font.render("RIGHT WINS", True, OFFWHITE)
+            
+            screen.blit(win_text, (400 - win_text.get_width()//2, 180))
+            again_text = small_font.render("Press Q to play again", True, OFFWHITE)
+            quit_text = small_font.render("Press E to quit", True, OFFWHITE)
+
+            screen.blit(again_text, (400 - again_text.get_width()//2, 320))
+            screen.blit(quit_text,  (400 - quit_text.get_width()//2,  390))
+
+            pygame.display.flip()
+
+            #input
+            waiting = True
+            while waiting:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        waiting = False
+                        running = False
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_q:
+                        # Reset everything
+                            left_y  = 250
+                            right_y = 250
+                            ball_x  = 395
+                            ball_y  = 295
+                            ball_vx = -4
+                            ball_vy = -3
+                            left_score  = 0
+                            right_score = 0
+                            waiting = False
+                        if event.key == pygame.K_e:
+                            waiting = False
+                            running = False
+        
 
     # pygame.draw.rect(surface, color, (x, y, width, height))
     pygame.display.flip()
 
-    #tick - will experiment with it later~      
+    #tick       
     clock.tick(60)
 
 
  
 pygame.quit()
+sys.exit()
