@@ -48,10 +48,22 @@ while running:
         left_y += 10
     
     # Right paddle — arrow keys
-    if keys[pygame.K_UP] and right_y >0:
-        right_y -= 10
-    if keys[pygame.K_DOWN] and right_y < 520:
-        right_y += 10
+    # if keys[pygame.K_UP] and right_y >0:
+    #     right_y -= 10
+    # if keys[pygame.K_DOWN] and right_y < 520:
+    #     right_y += 10
+
+    x = random.randint(1,10)
+
+    if ball_y < right_y and right_y >0:
+        if x < 10:
+            right_y -= random.choice([4,3])
+        
+    elif ball_y > right_y  and right_y < 520:
+        if x < 10:
+            right_y += random.choice([4,3])
+        
+
     
     # Move the ball
     prev_ball_x = ball_x # Bug correction, we need to save the current position of ball before changing it...
@@ -81,20 +93,20 @@ while running:
     #     ball_vx *= -1
 
      # Left paddle — did ball cross x=42 from right to left?
-    if prev_ball_x >= 42 and ball_x <= 42 and (left_y < ball_y < left_y + 80):
+    if prev_ball_x >= 42 and ball_x <= 42 and (left_y - 10 < ball_y < left_y + 90):  #increased 10 in both sides to manage the miss bug
         ball_x = 42
         ball_vx *= -1.2
         if abs(ball_vx) > 15:
             ball_vx = 15
 
     # Right paddle — did ball cross x=758 from left to right?
-    if prev_ball_x <= 758 and ball_x >= 758 and (right_y < ball_y < right_y + 80):
+    if prev_ball_x <= 758 and ball_x >= 758 and (right_y - 10 < ball_y < right_y + 90):
         ball_x = 758
         ball_vx *= -1.2
         if abs(ball_vx) > 15:
             ball_vx = -15
 
-    #draw
+    #draw the background of game screen
     screen.fill(BLACK)
 
     # Left paddle
