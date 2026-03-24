@@ -25,6 +25,10 @@ ball_vy = -3   # velocity: moves 3 pixels down every frame
 left_score = 0
 right_score = 0
 prev_ball_x = ball_x   # removes the problem of tunneling (ball passing through the paddle at high pixel speeds)
+prev_left_y = left_y # to add the paddle speed affecting the ball direction and speed thingy...
+prev_right_y = right_y 
+left_paddle_vy  = left_y  - prev_left_y
+right_paddle_vy = right_y - prev_right_y
 
 font = pygame.font.SysFont("monospace", 64, bold=True)
 win_font = pygame.font.SysFont("arial", 80, bold=True)
@@ -105,6 +109,10 @@ while True:
         ball_x += ball_vx
         ball_y += ball_vy
 
+        #frame by frame calculation of paddle positions
+        prev_left_y  = left_y
+        prev_right_y = right_y
+
         # Bounce off top and bottom walls
         if ball_y <= 0 or ball_y >= 590:
             ball_vy *= -1
@@ -133,6 +141,9 @@ while True:
             ball_vx *= -1.2
             if abs(ball_vx) > 20:
                 ball_vx = 20
+            ball_vy += left_paddle_vy * 0.5
+            if abs(ball_vy) < 2:
+                ball_vy = 5 if ball_vy >= 0 else -5
 
         # Right paddle — did ball cross x=758 from left to right?
         if prev_ball_x <= 758 and ball_x >= 758 and (right_y - 10 < ball_y < right_y + 90):
@@ -140,6 +151,14 @@ while True:
             ball_vx *= -1.2
             if abs(ball_vx) > 20:
                 ball_vx = -20
+            ball_vy += right_paddle_vy * 0.5
+            if abs(ball_vy) < 2:
+                ball_vy = 5 if ball_vy >= 0 else -5
+
+
+        #calculation of velocity of the paddles
+        left_paddle_vy  = left_y  - prev_left_y
+        right_paddle_vy = right_y - prev_right_y
 
         #draw the background of game screen
         screen.fill(BLACK)
