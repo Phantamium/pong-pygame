@@ -79,6 +79,10 @@ while True:
 
         keys = pygame.key.get_pressed()
 
+        #frame by frame calculation of paddle positions
+        prev_left_y  = left_y
+        prev_right_y = right_y
+
         #left-paddle (W and S)
         if keys[pygame.K_w] and left_y > 0:
             left_y -= 10
@@ -103,15 +107,15 @@ while True:
             elif ball_y > right_y  and right_y < 520:
                 if x < 10:
                     right_y += random.choice([4,3,1,2])
-            
+
+        #calculation of velocity of the paddles
+        left_paddle_vy  = left_y  - prev_left_y
+        right_paddle_vy = right_y - prev_right_y
+
         # Move the ball
         prev_ball_x = ball_x # Bug correction, we need to save the current position of ball before changing it...
         ball_x += ball_vx
         ball_y += ball_vy
-
-        #frame by frame calculation of paddle positions
-        prev_left_y  = left_y
-        prev_right_y = right_y
 
         # Bounce off top and bottom walls
         if ball_y <= 0 or ball_y >= 590:
@@ -154,11 +158,6 @@ while True:
             ball_vy += right_paddle_vy * 0.5
             if abs(ball_vy) < 2:
                 ball_vy = 5 if ball_vy >= 0 else -5
-
-
-        #calculation of velocity of the paddles
-        left_paddle_vy  = left_y  - prev_left_y
-        right_paddle_vy = right_y - prev_right_y
 
         #draw the background of game screen
         screen.fill(BLACK)
